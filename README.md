@@ -1,55 +1,28 @@
-# 🇮🇳 Decoding a Decade: Visualizing India’s GDP Growth (2014–2024)
+# 🇮🇳 India GDP Visualization
 
-### 📊 A Data Visualization Project using Streamlit, Plotly, and Python
-
----
-
-## 🧠 Project Overview
-
-**"Decoding a Decade"** is an interactive data visualization dashboard that explores **India’s GDP growth trends from 2014 to 2024**.  
-It provides a visual journey through India’s economic rise — capturing the effects of reforms, global events like COVID-19, and post-pandemic recovery.
+This project visualizes **India's GDP growth** over the years using Python.  
+It provides a clear, data-driven insight into how India’s economy has evolved.
 
 ---
 
-## 📂 Dataset Details
-
-- **Source:** World Bank — World Development Indicators (API)
-- **Fetched Using:** `requests` library in Python  
-- **Years Covered:** 2014–2024  
-- **Indicators Used:**
-  | Indicator Code | Description |
-  |----------------|-------------|
-  | NY.GDP.MKTP.CD | GDP (current US$) |
-  | NY.GDP.MKTP.KD | GDP (constant 2015 US$) |
-  | NY.GDP.MKTP.KD.ZG | GDP growth (%) |
-  | NY.GDP.PCAP.CD | GDP per capita (current US$) |
-  | SP.POP.TOTL | Total population |
-
-After fetching, the dataset was **cleaned and interpolated** for missing years using `pandas`, and exported as  
-👉 `india_gdp_2014_2024.csv`
+## 📊 Project Overview
+- Loads and cleans GDP data
+- Uses `matplotlib` to visualize economic growth
+- Demonstrates data fetching and visualization using `pandas` & `requests`
+- A simple example of real-world **data analysis using Python**
 
 ---
 
-## 🧰 Tools & Technologies
-
-| Category | Tools Used |
-|-----------|-------------|
-| Programming | Python |
-| Data Handling | Pandas |
-| Visualization | Plotly Express, Matplotlib |
-| Dashboard Framework | Streamlit |
-| Dataset Source | World Bank API |
-| Version Control | Git + GitHub |
+## 🧰 Tech Stack
+- **Language:** Python 3  
+- **Libraries:** Pandas, Matplotlib, Requests  
+- **Tools:** VS Code, Git, GitHub
 
 ---
 
-## ⚙️ How to Run the Project
+## ⚙️ How to Run
 
-pip install -r requirements.txt
-
-streamlit run gdp_dashboard.py
-
-### 1️⃣ Clone the Repository
-```bash
-git clone https://github.com/TejaswiniH123/india-gdp-visualization.git
-cd india-gdp-visualization
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/TejaswiniH123/india-gdp-visualization.git
+   cd india-gdp-visualization

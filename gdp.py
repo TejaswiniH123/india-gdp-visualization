@@ -1,14 +1,16 @@
-# Save as fetch_and_clean_india_gdp.py
+# fetch_and_clean_india_gdp.py
 import requests
 import pandas as pd
 
-# --- Parameters ---
+# -------------------------------
+# Parameters
+# -------------------------------
 country = "IN"
 start_year = 2014
 end_year = 2024
 years = list(range(start_year, end_year + 1))
 
-# Indicators (World Bank codes)
+# World Bank Indicators
 indicators = {
     "NY.GDP.MKTP.CD": "GDP_current_USD",
     "NY.GDP.MKTP.KD": "GDP_constant_2015_USD",
@@ -18,6 +20,7 @@ indicators = {
 }
 
 def fetch_indicator(indicator_code, short_name):
+    """Fetch indicator data from World Bank API."""
     url = f"https://api.worldbank.org/v2/country/{country}/indicator/{indicator_code}"
     params = {"date": f"{start_year}:{end_year}", "format": "json", "per_page": 1000}
     r = requests.get(url, params=params, timeout=30)
@@ -27,51 +30,37 @@ def fetch_indicator(indicator_code, short_name):
         print(f"⚠️ No data found for {short_name}")
         return pd.DataFrame({"year": years, short_name: [None]*len(years)})
     records = data[1]
-    rows = []
-    for rec in records:
-        year = int(rec["date"])
-        value = rec["value"]
-        rows.append({"year": year, short_name: value})
+    rows = [{"year": int(rec["date"]), short_name: rec["value"]} for rec in records]
     return pd.DataFrame(rows)
 
+# -------------------------------
 # Fetch all indicators
+# -------------------------------
 dfs = {}
 for code, short in indicators.items():
-    print("Fetching", code)
+    print("📡 Fetching:", code)
     dfs[short] = fetch_indicator(code, short)
 
-# Start with years DataFrame
+# -------------------------------
+# Merge all indicators into one DataFrame
+# -------------------------------
 df = pd.DataFrame({"year": years})
-
-# Merge
 for short, ind_df in dfs.items():
     df = df.merge(ind_df, on="year", how="left")
 
-# Convert numeric
+# Convert to numeric
 num_cols = [c for c in df.columns if c != "year"]
-for c in num_cols:
-    df[c] = pd.to_numeric(df[c], errors="coerce")
+df[num_cols] = df[num_cols].apply(pd.to_numeric, errors="coerce")
 
-# Interpolate missing
-df_clean = df.copy()
-for c in num_cols:
-    if df_clean[c].isna().any():
-        df_clean[c] = df_clean[c].interpolate(method="linear", limit_direction="both")
+# Interpolate missing values
+df_clean = df.interpolate(method="linear", limit_direction="both")
 
-# Derived
+# Derived columns
 df_clean["GDP_current_billion_USD"] = df_clean["GDP_current_USD"] / 1e9
 df_clean["GDP_constant_2015_billion_USD"] = df_clean["GDP_constant_2015_USD"] / 1e9
 
-# Flag imputed values
-df_clean["notes_missing_imputed"] = False
-for c in num_cols:
-    imputed = df[c].isna() & df_clean[c].notna()
-    df_clean.loc[imputed, "notes_missing_imputed"] = True
-
-# Save
+# Save cleaned dataset
 out_csv = "india_gdp_2014_2024.csv"
 df_clean.to_csv(out_csv, index=False)
-print("✅ Saved cleaned CSV to", out_csv)
-
-# Preview
-print(df_clean.head(12))
+print(f"✅ Cleaned data saved as {out_csv}")
+print(df_clean.head(10))
